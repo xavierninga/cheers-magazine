@@ -1,0 +1,62 @@
+/* homepage.css */
+
+/* ── Hero ────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 0 2rem;
+  background: radial-gradient(ellipse at 62% 40%, #1c0000 0%, #0A0A0A 62%);
+}
+.hero-accent { position: absolute; left: 0; top: 27%; width: 4px; height: 46%; background: linear-gradient(to bottom, transparent, var(--red), transparent); }
+.hero-content { text-align: center; max-width: 880px; opacity: 0; transform: translateY(34px); transition: opacity .9s var(--ease-spring), transform .9s var(--ease-spring); }
+.hero-content.vis { opacity: 1; transform: none; }
+.hero-eyebrow { font-size: .8rem; letter-spacing: .42em; text-transform: uppercase; color: var(--red); margin-bottom: 1.1rem; }
+.hero-title { font-family: var(--font-d); font-size: clamp(4rem, 11vw, 9rem); font-weight: 900; line-height: .9; letter-spacing: -.02em; margin-bottom: 1.4rem; }
+.hero-sub { font-size: 1.05rem; letter-spacing: .04em; color: rgba(245,245,240,.58); line-height: 1.65; max-width: 490px; margin: 0 auto 2.5rem; }
+.hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.scroll-hint { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 7px; opacity: .38; pointer-events: none; }
+.scroll-hint span { font-size: .66rem; letter-spacing: .3em; text-transform: uppercase; }
+.scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--red), transparent); animation: scrlPulse 2s ease-in-out infinite; }
+@keyframes scrlPulse { 0%,100%{height:40px;opacity:1} 50%{height:22px;opacity:.4} }
+
+/* ── Latest Issues ───────────────────────────── */
+.latest-section { padding: 7rem 2rem; }
+.section-wrap { max-width: 1150px; margin: 0 auto; }
+.section-top { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+.section-eyebrow { font-size: .7rem; letter-spacing: .38em; text-transform: uppercase; color: var(--red); margin-bottom: .4rem; }
+.section-title { font-family: var(--font-d); font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; }
+.view-all { font-size: .78rem; letter-spacing: .18em; text-transform: uppercase; color: var(--red); transition: opacity .2s; }
+.view-all:hover { opacity: .65; }
+.issues-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.8rem; }
+
+/* ── Issue Card ──────────────────────────────── */
+.issue-card {
+  background: var(--gray); border: 1px solid var(--gray-mid);
+  border-radius: 4px; overflow: hidden; cursor: pointer;
+  transition: transform .28s var(--ease-spring), border-color .22s;
+}
+.issue-card:hover { transform: translateY(-5px); border-color: var(--red); }
+.issue-cover { width: 100%; aspect-ratio: 3/4; background: linear-gradient(135deg,#1c0000,#111); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.issue-cover img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.issue-num-bg { font-family: var(--font-d); font-size: 5rem; font-weight: 900; color: rgba(200,16,46,.18); pointer-events: none; position: relative; z-index: 1; }
+.cover-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 55%; background: linear-gradient(to top, var(--gray), transparent); z-index: 2; }
+.issue-new-badge { position: absolute; top: 10px; right: 10px; background: var(--red); color: #fff; font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; padding: 3px 9px; border-radius: 2px; z-index: 3; }
+.issue-soon-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; z-index: 3; }
+.issue-soon-label { font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; background: var(--gray-mid); color: rgba(245,245,240,.5); padding: 4px 12px; border-radius: 2px; }
+.issue-body { padding: 1.1rem; }
+.issue-vol  { color: var(--red); font-size: .63rem; letter-spacing: .28em; margin-bottom: 4px; }
+.issue-name { font-family: var(--font-d); font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+.issue-date { font-size: .78rem; color: rgba(245,245,240,.4); letter-spacing: .07em; margin-bottom: 1rem; }
+.issue-btn  { display: block; text-align: center; padding: .48rem; border: 1px solid rgba(200,16,46,.4); color: var(--red); font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; border-radius: 2px; transition: background .18s, color .18s; }
+.issue-btn:hover { background: var(--red); color: #fff; }
+
+/* ── Features Strip ──────────────────────────── */
+.features-strip { border-top: 1px solid var(--gray); border-bottom: 1px solid var(--gray); padding: 3.5rem 2rem; background: var(--gray); }
+.features-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; }
+.feat-item { text-align: center; }
+.feat-icon  { font-size: 2rem; display: block; margin-bottom: .7rem; }
+.feat-title { font-size: .95rem; font-weight: 600; letter-spacing: .05em; margin-bottom: .3rem; }
+.feat-desc  { font-size: .78rem; color: rgba(245,245,240,.42); line-height: 1.5; }
+
+@media(max-width:768px){ .features-inner { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:480px){ .hero-btns { flex-direction: column; align-items: center; } }

@@ -1,0 +1,76 @@
+/* reader.css */
+body.reader-body { overflow: hidden; }
+
+.reader-wrap { display: flex; flex-direction: column; height: 100vh; background: #111; user-select: none; -webkit-user-select: none; }
+
+/* ── Topbar ─────────────────────────────────── */
+.reader-topbar { display: flex; align-items: center; justify-content: space-between; padding: .62rem 1.4rem; background: var(--black); border-bottom: 1px solid var(--gray); flex-shrink: 0; gap: 1rem; }
+.reader-logo   { font-family: var(--font-d); font-size: .95rem; font-weight: 700; }
+.reader-info   { font-family: var(--font-m); font-size: .7rem; opacity: .4; }
+.reader-back   { font-size: .78rem; letter-spacing: .1em; opacity: .5; transition: opacity .2s, color .2s; white-space: nowrap; }
+.reader-back:hover { opacity: 1; color: var(--red); }
+
+/* ── Stage ──────────────────────────────────── */
+.reader-stage { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 1.5rem; }
+.page-book {
+  width: min(420px, 72vw); aspect-ratio: 3/4;
+  position: relative;
+  box-shadow: var(--shadow-page);
+  border-radius: 3px; overflow: hidden;
+  background: var(--gray);
+  transform: scale(var(--zoom,1));
+  transition: transform .55s var(--ease-flip);
+  cursor: pointer;
+}
+.page-book.flip-next { transform: scale(var(--zoom,1)) rotateY(-90deg); transform-origin: left center; }
+.page-book.flip-prev { transform: scale(var(--zoom,1)) rotateY(90deg);  transform-origin: right center; }
+.page-img { width: 100%; height: 100%; object-fit: cover; display: block; position: relative; z-index: 1; }
+.page-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg,#1c0000,#111); position: absolute; inset: 0; }
+.placeholder-num   { font-family: var(--font-d); font-size: 6rem; font-weight: 900; color: rgba(200,16,46,.16); line-height: 1; }
+.placeholder-label { font-size: .7rem; letter-spacing: .2em; opacity: .28; margin-top: .4rem; }
+.watermark-layer   { position: absolute; inset: 0; pointer-events: none; background-repeat: repeat; background-size: 230px; z-index: 5; }
+
+/* ── Arrows ─────────────────────────────────── */
+.page-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; background: rgba(200,16,46,.12); border: 1px solid rgba(200,16,46,.38); color: var(--white); font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s; z-index: 10; }
+.page-arrow:hover    { background: var(--red); }
+.page-arrow:disabled { opacity: .18; pointer-events: none; }
+.page-arrow.prev { left: 12px; }
+.page-arrow.next { right: 12px; }
+
+/* ── Progress ────────────────────────────────── */
+.reader-progress { height: 2px; background: var(--gray); flex-shrink: 0; }
+.progress-fill   { height: 100%; background: var(--red); transition: width .4s; }
+
+/* ── Controls ────────────────────────────────── */
+.reader-controls { display: flex; align-items: center; gap: .45rem; padding: .6rem 1.2rem; background: var(--black); border-top: 1px solid var(--gray); flex-shrink: 0; flex-wrap: wrap; }
+.ctrl-spacer { flex: 1; min-width: 10px; }
+.ctrl-page   { font-family: var(--font-m); font-size: .7rem; opacity: .4; white-space: nowrap; }
+.ctrl-btn { width: 31px; height: 31px; border-radius: 4px; border: 1px solid var(--gray-mid); color: var(--white); font-size: .9rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .2s, background .2s; flex-shrink: 0; }
+.ctrl-btn:hover  { border-color: var(--red); }
+.ctrl-btn.active { border-color: var(--red); color: var(--red); }
+.ctrl-zoom-lbl   { font-family: var(--font-m); font-size: .66rem; opacity: .4; min-width: 36px; text-align: center; }
+
+/* ── Thumbnails ──────────────────────────────── */
+.reader-thumbs { display: none; gap: 5px; overflow-x: auto; padding: .6rem 1rem; background: var(--black); border-top: 1px solid var(--gray); flex-shrink: 0; }
+.reader-thumbs.open { display: flex; }
+.thumb-btn { flex-shrink: 0; width: 46px; aspect-ratio: 3/4; background: var(--gray); border: 1px solid var(--gray-mid); border-radius: 2px; overflow: hidden; cursor: pointer; padding: 0; transition: border-color .15s; }
+.thumb-btn.active { border: 2px solid var(--red); }
+.thumb-btn img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-num { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: .58rem; color: rgba(245,245,240,.28); }
+
+/* ── Kbd hints ───────────────────────────────── */
+.kbd-hints { display: flex; gap: 1.5rem; justify-content: center; padding: .32rem; flex-wrap: wrap; background: var(--black); flex-shrink: 0; }
+.kbd-hint  { font-family: var(--font-m); font-size: .58rem; opacity: .2; }
+
+/* ── Loading overlay ─────────────────────────── */
+.reader-loading { position: absolute; inset: 0; background: rgba(10,10,10,.94); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; z-index: 50; }
+.reader-loading p { font-size: .8rem; opacity: .5; letter-spacing: .1em; }
+.load-bar  { width: 200px; height: 2px; background: var(--gray); border-radius: 1px; overflow: hidden; }
+.load-fill { height: 100%; background: var(--red); width: 0; transition: width .3s; }
+
+/* ── Empty state ─────────────────────────────── */
+.reader-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding: 2rem; opacity: .65; }
+.reader-empty h2 { font-family: var(--font-d); font-size: 1.5rem; }
+.reader-empty p  { font-size: .85rem; opacity: .65; max-width: 320px; line-height: 1.6; }
+
+@media(max-width:600px){ .kbd-hints { display: none; } .page-book { width: min(320px, 90vw); } }
