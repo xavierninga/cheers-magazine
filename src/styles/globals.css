@@ -1,0 +1,164 @@
+/* ============================================
+   globals.css — Cheers Magazine
+   Global styles, CSS variables, font imports
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Barlow+Condensed:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- CSS Variables ---- */
+:root {
+  /* Brand */
+  --color-black: #0A0A0A;
+  --color-red: #C8102E;
+  --color-red-dark: #8B0000;
+  --color-red-light: #FF1744;
+  --color-white: #F5F5F0;
+  --color-gray: #1A1A1A;
+  --color-gray-mid: #2D2D2D;
+  --color-gray-light: #6B6B6B;
+
+  /* Fonts */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Barlow Condensed', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Reader */
+  --reader-page-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 4px 20px rgba(0,0,0,0.4);
+  --reader-bg: #111111;
+
+  /* Animation */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-medium: 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-page-flip: 600ms cubic-bezier(0.645, 0.045, 0.355, 1.000);
+}
+
+/* ---- Base Reset ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-black);
+  color: var(--color-white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ---- Typography ---- */
+.font-display { font-family: var(--font-display); }
+.font-body { font-family: var(--font-body); }
+.font-mono { font-family: var(--font-mono); }
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track { background: var(--color-black); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-red);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-red-light); }
+
+/* ---- Selection ---- */
+::selection {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+/* ---- Focus Outline ---- */
+:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+/* ---- No-select utility (anti-piracy) ---- */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ---- Page flip 3D container ---- */
+.flip-container {
+  perspective: 2000px;
+  transform-style: preserve-3d;
+}
+
+/* ---- Noise overlay ---- */
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ---- Shimmer skeleton loading ---- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray) 25%,
+    var(--color-gray-mid) 50%,
+    var(--color-gray) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* ---- Magazine page shadow ---- */
+.magazine-page {
+  box-shadow: var(--reader-page-shadow);
+  transform-origin: left center;
+  transition: transform var(--transition-page-flip);
+}
+
+/* ---- Dev testing badge ---- */
+.dev-badge {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: var(--color-red);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 9999;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---- Debug overlay ---- */
+.debug-overlay {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid var(--color-red);
+  color: var(--color-white);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 12px;
+  border-radius: 6px;
+  z-index: 9998;
+  min-width: 220px;
+  backdrop-filter: blur(10px);
+}
