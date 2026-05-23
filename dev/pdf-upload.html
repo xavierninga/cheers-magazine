@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>PDF Upload — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>📄 PDF Upload & Extraction</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+
+<div class="dev-wrap">
+  <div class="dev-grid-2">
+
+    <!-- LEFT COLUMN -->
+    <div>
+      <!-- Saved notice -->
+      <div class="saved-notice" id="savedNotice">
+        ✅ Pages saved to reader!
+        <a href="../reader.html" style="color:#4CAF50;font-weight:700;margin-left:8px">Open Reader →</a>
+        &nbsp;<button onclick="MagazineStore.clear();document.getElementById('savedNotice').classList.remove('visible')" style="background:none;border:none;color:rgba(76,175,80,.5);cursor:pointer;font-size:.75rem">Clear</button>
+      </div>
+
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="dropZone">
+        <span class="drop-zone-icon">📄</span>
+        <h3>Drag & Drop your PDF here</h3>
+        <p>Supports any PDF up to 200 MB</p>
+        <label class="drop-browse">
+          Browse File
+          <input type="file" id="fileInput" accept=".pdf" style="display:none"/>
+        </label>
+      </div>
+
+      <!-- File info bar -->
+      <div class="file-info-bar" id="fileInfoBar">
+        <div class="fi-name" id="fiName">—</div>
+        <div class="fi-size" id="fiSize">—</div>
+      </div>
+
+      <!-- Options -->
+      <div class="dev-card">
+        <p class="dev-section-title">Extraction Options</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end">
+          <div>
+            <label class="form-label" style="font-size:.62rem">Render Scale</label>
+            <select id="optScale" class="form-input" style="width:100px;padding:.35rem .6rem;font-size:.85rem">
+              <option value="1">1× Fast</option>
+              <option value="1.5" selected>1.5× Good</option>
+              <option value="2">2× High</option>
+              <option value="2.5">2.5× Max</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="font-size:.62rem">JPEG Quality</label>
+            <select id="optQuality" class="form-input" style="width:100px;padding:.35rem .6rem;font-size:.85rem">
+              <option value="0.7">70%</option>
+              <option value="0.85" selected>85%</option>
+              <option value="0.95">95%</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label" style="font-size:.62rem">Max Pages</label>
+            <select id="optMax" class="form-input" style="width:100px;padding:.35rem .6rem;font-size:.85rem">
+              <option value="0">All</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-row">
+          <span id="progressMsg">Extracting pages…</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-chip"><strong id="stPages">0</strong>Pages</div>
+        <div class="stat-chip"><strong id="stSize">—</strong>File Size</div>
+        <div class="stat-chip"><strong id="stTime">—</strong>Time</div>
+        <div class="stat-chip"><strong id="stScale">—</strong>Scale</div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row">
+        <button class="btn btn-primary btn-sm" id="btnExtract" disabled>▶ Extract Pages</button>
+        <button class="btn btn-outline btn-sm" id="btnClear">🗑 Clear All</button>
+        <a href="../reader.html" class="btn btn-red-outline btn-sm" id="btnReader" style="display:none">📖 Open Reader</a>
+      </div>
+
+      <!-- Log -->
+      <div class="log-panel" style="margin-top:1.2rem">
+        <div class="log-header">
+          <span>CONVERSION LOG</span>
+          <button class="log-clear" id="btnLogClear">CLEAR</button>
+        </div>
+        <div class="log-body" id="logBody">
+          <span class="l-info">Upload a PDF to begin. Logs will appear here.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Page Previews -->
+    <div>
+      <p class="dev-section-title" id="previewTitle">EXTRACTED PAGES (0)</p>
+      <div class="pages-preview-grid" id="pagesGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;opacity:.3;font-size:.85rem">
+          Pages will appear here after extraction
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions box -->
+  <div style="margin-top:2rem;background:#0d0d0d;border:1px solid var(--gray-mid);border-radius:6px;padding:1.5rem">
+    <p style="font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:1rem">HOW TO UPLOAD A SAMPLE PDF</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+      <div style="display:flex;gap:.8rem;align-items:flex-start">
+        <span style="font-size:1.4rem;flex-shrink:0">1️⃣</span>
+        <div><p style="font-weight:600;margin-bottom:3px;font-size:.9rem">Get a PDF</p><p style="font-size:.78rem;opacity:.5;line-height:1.55">Any PDF works — a magazine, brochure, or multi-page document. For testing, try a free magazine PDF from <em>issuu.com</em> or any local file.</p></div>
+      </div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start">
+        <span style="font-size:1.4rem;flex-shrink:0">2️⃣</span>
+        <div><p style="font-weight:600;margin-bottom:3px;font-size:.9rem">Drop or Browse</p><p style="font-size:.78rem;opacity:.5;line-height:1.55">Drag the PDF onto the drop zone above, or click "Browse File" to select it. The file stays local — nothing is uploaded to any server.</p></div>
+      </div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start">
+        <span style="font-size:1.4rem;flex-shrink:0">3️⃣</span>
+        <div><p style="font-weight:600;margin-bottom:3px;font-size:.9rem">Click Extract</p><p style="font-size:.78rem;opacity:.5;line-height:1.55">Hit "Extract Pages". Each page is converted to a JPEG image right in your browser using PDF.js. Previews appear on the right in real time.</p></div>
+      </div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start">
+        <span style="font-size:1.4rem;flex-shrink:0">4️⃣</span>
+        <div><p style="font-weight:600;margin-bottom:3px;font-size:.9rem">Open Reader</p><p style="font-size:.78rem;opacity:.5;line-height:1.55">Click "Open Reader" — your PDF pages load instantly into the full magazine reader with page-flip animations, zoom, and sound.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script>
+(function(){
+  let file = null, extracted = [];
+
+  const $ = id => document.getElementById(id);
+  const dropZone   = $('dropZone');
+  const fileInput  = $('fileInput');
+  const btnExtract = $('btnExtract');
+  const btnClear   = $('btnClear');
+  const btnReader  = $('btnReader');
+  const savedNotice= $('savedNotice');
+  const logBody    = $('logBody');
+  const progFill   = $('progFill');
+  const pagesGrid  = $('pagesGrid');
+
+  function log(level, msg){
+    const div=document.createElement('div');
+    div.className='l-'+level;
+    div.textContent=`${new Date().toLocaleTimeString()}  ${msg}`;
+    if(logBody.querySelector('span')) logBody.innerHTML='';
+    logBody.insertBefore(div, logBody.firstChild);
+  }
+  function setProgress(pct, msg){
+    progFill.style.width=pct+'%';
+    $('progressPct').textContent=pct+'%';
+    if(msg) $('progressMsg').textContent=msg;
+  }
+  function fmtSize(b){ return b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB'; }
+
+  function setFile(f){
+    if(f.type!=='application/pdf'){ alert('Please select a PDF file.'); return; }
+    file=f;
+    $('fiName').textContent=f.name;
+    $('fiSize').textContent=fmtSize(f.size);
+    $('fileInfoBar').classList.add('visible');
+    btnExtract.disabled=false;
+    log('info',`File ready: ${f.name} (${fmtSize(f.size)})`);
+  }
+
+  // Drag & drop
+  dropZone.addEventListener('dragover', e=>{e.preventDefault();dropZone.classList.add('drag');});
+  dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('drag'));
+  dropZone.addEventListener('drop', e=>{
+    e.preventDefault(); dropZone.classList.remove('drag');
+    if(e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change',()=>{ if(fileInput.files[0]) setFile(fileInput.files[0]); });
+
+  // Extract
+  btnExtract.addEventListener('click', async ()=>{
+    if(!file) return;
+    extracted=[]; pagesGrid.innerHTML='';
+    savedNotice.classList.remove('visible');
+    btnReader.style.display='none';
+    $('progressWrap').classList.add('visible');
+    $('statsRow').classList.remove('visible');
+    btnExtract.disabled=true;
+    const t0=Date.now();
+    const scale   = parseFloat($('optScale').value);
+    const quality = parseFloat($('optQuality').value);
+    const maxP    = parseInt($('optMax').value)||0;
+
+    log('info',`Starting extraction — Scale: ${scale}×, Quality: ${Math.round(quality*100)}%`);
+    setProgress(5,'Loading PDF.js…');
+
+    try {
+      // Load PDF.js from CDN using module script
+      const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.mjs');
+      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.mjs';
+
+      log('info','PDF.js loaded. Reading file…');
+      setProgress(10,'Reading file…');
+
+      const ab  = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({data:ab}).promise;
+      const total = maxP>0 ? Math.min(maxP,pdf.numPages) : pdf.numPages;
+
+      log('success',`PDF opened — ${pdf.numPages} pages total. Extracting ${total}…`);
+      setProgress(12,`Rendering ${total} pages…`);
+
+      for(let i=1;i<=total;i++){
+        const page     = await pdf.getPage(i);
+        const viewport = page.getViewport({scale});
+        const canvas   = document.createElement('canvas');
+        canvas.width   = viewport.width;
+        canvas.height  = viewport.height;
+        await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+        const dataUrl  = canvas.toDataURL('image/jpeg',quality);
+        const kb       = Math.round(dataUrl.length*.75/1024);
+        extracted.push({dataUrl, width:Math.round(viewport.width), height:Math.round(viewport.height)});
+
+        // Thumbnail
+        const thumb=document.createElement('div');
+        thumb.className='preview-thumb';
+        thumb.innerHTML=`<img src="${dataUrl}" alt="Page ${i}"/><div class="preview-label">p.${i} · ${kb}KB</div>`;
+        pagesGrid.appendChild(thumb);
+
+        setProgress(12+Math.round((i/total)*85),`Page ${i} / ${total}…`);
+        log('success',`Page ${i} ✓  ${Math.round(viewport.width)}×${Math.round(viewport.height)}px · ${kb}KB`);
+      }
+
+      setProgress(100,'✅ Complete!');
+      const elapsed=((Date.now()-t0)/1000).toFixed(1);
+      log('success',`All ${total} pages extracted in ${elapsed}s`);
+
+      // Stats
+      $('stPages').textContent=total;
+      $('stSize').textContent=fmtSize(file.size);
+      $('stTime').textContent=elapsed+'s';
+      $('stScale').textContent=scale+'×';
+      $('statsRow').classList.add('visible');
+      $('previewTitle').textContent=`EXTRACTED PAGES (${total})`;
+
+      // Save & show buttons
+      const ok = MagazineStore.save(extracted);
+      if(ok){
+        savedNotice.classList.add('visible');
+        btnReader.style.display='inline-flex';
+        log('success','Pages saved to browser storage. Reader is ready.');
+      } else {
+        log('warn','Storage save failed — file may be too large. Try Max Pages: 25.');
+      }
+
+    } catch(err){
+      log('error','Extraction failed: '+err.message);
+      console.error(err);
+    } finally {
+      btnExtract.disabled=false;
+    }
+  });
+
+  // Clear
+  btnClear.addEventListener('click',()=>{
+    file=null; extracted=[]; fileInput.value='';
+    $('fileInfoBar').classList.remove('visible');
+    $('progressWrap').classList.remove('visible');
+    $('statsRow').classList.remove('visible');
+    savedNotice.classList.remove('visible');
+    btnExtract.disabled=true;
+    btnReader.style.display='none';
+    pagesGrid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;opacity:.3;font-size:.85rem">Pages will appear here after extraction</div>';
+    $('previewTitle').textContent='EXTRACTED PAGES (0)';
+    MagazineStore.clear();
+    logBody.innerHTML='<span class="l-info">Cleared.</span>';
+  });
+
+  $('btnLogClear').addEventListener('click',()=>{ logBody.innerHTML='<span class="l-info">Log cleared.</span>'; });
+
+  // Already have pages?
+  document.addEventListener('DOMContentLoaded',()=>{
+    if(MagazineStore.hasData()){
+      savedNotice.classList.add('visible');
+      btnReader.style.display='inline-flex';
+      log('info',`${MagazineStore.count()} pages already saved from previous session.`);
+    }
+  });
+})();
+</script>
+</body>
+</html>

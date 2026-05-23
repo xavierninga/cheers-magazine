@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Payment Sim — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>💳 Payment Simulation</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+  <div class="dev-grid-2">
+    <div>
+      <div class="dev-card">
+        <p class="dev-section-title">Select Plan</p>
+        <div id="planSel"></div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Simulation Scenario</p>
+        <div id="scenarioSel"></div>
+      </div>
+      <div class="dev-card status-display" id="statusBox" style="margin-top:.8rem">
+        <p style="font-size:.65rem;letter-spacing:.22em;opacity:.45;margin-bottom:.5rem">STATUS</p>
+        <p class="status-val" id="statusVal" style="color:var(--gray-lt)">idle</p>
+        <p id="txnId" style="font-family:var(--font-m);font-size:.6rem;opacity:.3;margin-top:.4rem"></p>
+      </div>
+      <div style="display:flex;gap:.8rem;margin-top:1rem">
+        <button class="btn btn-primary btn-sm" id="btnSim" style="flex:1">▶ Simulate Payment</button>
+        <button class="btn btn-outline btn-sm" id="btnReset">Reset</button>
+      </div>
+    </div>
+    <div class="log-panel" style="display:flex;flex-direction:column">
+      <div class="log-header">
+        <span>PAYMENT EVENT LOG</span>
+        <button class="log-clear" id="btnClearLog">CLEAR</button>
+      </div>
+      <div class="log-body" id="payLog" style="flex:1;min-height:360px">
+        <span class="l-info">Select a plan and scenario, then click Simulate.</span>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+const PLANS=[
+  {id:'monthly',label:'Monthly',price:'2,500 XAF/month'},
+  {id:'annual', label:'Annual', price:'24,000 XAF/year'},
+  {id:'single', label:'Single Issue',price:'500 XAF'},
+];
+const SCENARIOS=[
+  {id:'success',  label:'✅ Successful Payment', color:'#4CAF50', delay:2000},
+  {id:'failed',   label:'❌ Card Declined',      color:'var(--red)', delay:2500},
+  {id:'cancelled',label:'↩ User Cancelled',     color:'#FF9800', delay:800},
+  {id:'timeout',  label:'⏱ Gateway Timeout',    color:'#9E9E9E', delay:5000},
+];
+let selPlan='monthly', selScenario='success', simming=false;
+
+function log(level,msg){
+  const b=document.getElementById('payLog');
+  const d=document.createElement('div'); d.className='l-'+level;
+  d.textContent=new Date().toLocaleTimeString()+'  '+msg;
+  if(b.querySelector('span')) b.innerHTML='';
+  b.insertBefore(d,b.firstChild);
+}
+function setStatus(val,color){ document.getElementById('statusVal').style.color=color; document.getElementById('statusVal').textContent=val; }
+
+function renderPlans(){
+  const wrap=document.getElementById('planSel'); wrap.innerHTML='';
+  PLANS.forEach(p=>{
+    const card=document.createElement('div');
+    card.className='scenario-card'+(p.id===selPlan?' selected':'');
+    card.innerHTML=`<span style="font-weight:600">${p.label}</span><span style="font-family:var(--font-m);font-size:.75rem;color:var(--red)">${p.price}</span>`;
+    card.addEventListener('click',()=>{ selPlan=p.id; renderPlans(); });
+    wrap.appendChild(card);
+  });
+}
+function renderScenarios(){
+  const wrap=document.getElementById('scenarioSel'); wrap.innerHTML='';
+  SCENARIOS.forEach(s=>{
+    const card=document.createElement('div');
+    card.className='scenario-card'+(s.id===selScenario?' selected':'');
+    card.innerHTML=`<span>${s.label}</span><span style="font-family:var(--font-m);font-size:.62rem;opacity:.4">${s.delay}ms</span>`;
+    card.addEventListener('click',()=>{ selScenario=s.id; renderScenarios(); });
+    wrap.appendChild(card);
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  renderPlans(); renderScenarios();
+
+  document.getElementById('btnSim').addEventListener('click',()=>{
+    if(simming) return;
+    simming=true;
+    const plan=PLANS.find(p=>p.id===selPlan);
+    const scenario=SCENARIOS.find(s=>s.id===selScenario);
+    const txn='TXN_'+Date.now().toString(36).toUpperCase();
+    document.getElementById('txnId').textContent=txn;
+    setStatus('processing','#FF9800');
+    document.getElementById('btnSim').disabled=true;
+
+    log('info',`Initiating payment: ${plan.label} — ${plan.price}`);
+    log('info',`Transaction ID: ${txn}`);
+    log('info',`Scenario: ${scenario.label}`);
+    log('info','Connecting to payment gateway…');
+
+    setTimeout(()=>log('info','Gateway connected. Processing card…'), 600);
+    setTimeout(()=>{
+      if(selScenario==='success'){
+        log('success','Authorization approved ✅');
+        log('success','POST /api/webhooks/payment { status: "succeeded" }');
+        log('success','Subscription activated');
+        log('success','Confirmation email queued');
+        setStatus('success','#4CAF50');
+      } else if(selScenario==='failed'){
+        log('error','Card declined — insufficient funds ❌');
+        log('warn','POST /api/webhooks/payment { status: "failed" }');
+        log('info','Failure logged to database');
+        setStatus('failed','var(--red)');
+      } else if(selScenario==='cancelled'){
+        log('warn','Payment cancelled by user');
+        log('warn','POST /api/webhooks/payment { status: "cancelled" }');
+        setStatus('cancelled','#FF9800');
+      } else {
+        log('error','Gateway timeout after 5s ⏱');
+        log('warn','POST /api/webhooks/payment { status: "timeout" }');
+        setStatus('timeout','#9E9E9E');
+      }
+      simming=false;
+      document.getElementById('btnSim').disabled=false;
+    }, scenario.delay);
+  });
+
+  document.getElementById('btnReset').addEventListener('click',()=>{
+    setStatus('idle','var(--gray-lt)');
+    document.getElementById('txnId').textContent='';
+    document.getElementById('payLog').innerHTML='<span class="l-info">Reset. Ready for next simulation.</span>';
+    document.getElementById('btnSim').disabled=false;
+    simming=false;
+  });
+  document.getElementById('btnClearLog').addEventListener('click',()=>{ document.getElementById('payLog').innerHTML='<span class="l-info">Log cleared.</span>'; });
+});
+</script>
+</body>
+</html>

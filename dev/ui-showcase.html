@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>UI Showcase — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+  <style>
+    .showcase-section{margin-bottom:3rem}
+    .showcase-title{font-family:var(--font-d);font-size:1.15rem;padding-bottom:.7rem;border-bottom:1px solid var(--gray-mid);margin-bottom:1.4rem}
+    .color-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:1rem}
+    .color-swatch{border-radius:4px}
+    .color-block{height:60px;border-radius:3px;border:1px solid rgba(255,255,255,.06);margin-bottom:.5rem}
+    .color-name{font-size:.72rem;font-weight:600;margin-bottom:2px}
+    .color-hex{font-family:var(--font-m);font-size:.6rem;opacity:.42}
+    .type-row{border-bottom:1px solid #111;padding-bottom:1rem;margin-bottom:1rem}
+    .type-meta{font-family:var(--font-m);font-size:.58rem;opacity:.28;margin-bottom:.4rem}
+    .badge-row{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+    .badge{padding:3px 10px;border-radius:2px;font-size:.62rem;letter-spacing:.18em;font-weight:600}
+    .card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem}
+    .demo-card{background:var(--gray);border:1px solid var(--gray-mid);border-radius:5px;padding:1.1rem;transition:all .2s;cursor:pointer}
+    .demo-card:hover{border-color:var(--red);transform:translateY(-2px)}
+    .skel-row{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+    .toast-notif{position:fixed;top:5rem;right:2rem;background:#4CAF50;color:#fff;padding:.7rem 1.4rem;border-radius:5px;font-size:.82rem;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(-10px);transition:opacity .3s,transform .3s;pointer-events:none}
+    .toast-notif.show{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>🎨 UI Showcase</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+
+  <!-- Colors -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Brand Color System</h2>
+    <div class="color-grid">
+      <div class="color-swatch"><div class="color-block" style="background:#0A0A0A"></div><p class="color-name">Black</p><p class="color-hex">#0A0A0A</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#C8102E"></div><p class="color-name">Brand Red</p><p class="color-hex">#C8102E</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#FF1744"></div><p class="color-name">Red Light</p><p class="color-hex">#FF1744</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#8B0000"></div><p class="color-name">Red Dark</p><p class="color-hex">#8B0000</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#F5F5F0;border-color:rgba(0,0,0,.2)"></div><p class="color-name">Off White</p><p class="color-hex">#F5F5F0</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#1A1A1A"></div><p class="color-name">Gray</p><p class="color-hex">#1A1A1A</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#2D2D2D"></div><p class="color-name">Gray Mid</p><p class="color-hex">#2D2D2D</p></div>
+      <div class="color-swatch"><div class="color-block" style="background:#6B6B6B"></div><p class="color-name">Gray Light</p><p class="color-hex">#6B6B6B</p></div>
+    </div>
+  </div>
+
+  <!-- Typography -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Typography Scale</h2>
+    <div class="type-row"><p class="type-meta">Playfair Display · 900 · Display</p><p style="font-family:var(--font-d);font-size:3.5rem;font-weight:900;line-height:1">CHEERS Magazine</p></div>
+    <div class="type-row"><p class="type-meta">Playfair Display · 700 italic · Heading</p><p style="font-family:var(--font-d);font-size:2rem;font-weight:700;font-style:italic">Premium Edition 2026</p></div>
+    <div class="type-row"><p class="type-meta">Barlow Condensed · 700 · H1</p><p style="font-family:var(--font-b);font-size:1.8rem;font-weight:700;letter-spacing:.04em">SECTION HEADING</p></div>
+    <div class="type-row"><p class="type-meta">Barlow Condensed · 400 · Body</p><p style="font-family:var(--font-b);font-size:1rem;line-height:1.7;opacity:.75">Body text for articles and descriptions. Clear, legible, and modern.</p></div>
+    <div class="type-row"><p class="type-meta">JetBrains Mono · 400 · Code / Labels</p><p style="font-family:var(--font-m);font-size:.85rem;opacity:.65">const reader = new MagazineReader(); // DEV MODE</p></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Button Components</h2>
+    <div style="display:flex;gap:.8rem;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary">Primary</button>
+      <button class="btn btn-outline">Outline</button>
+      <button class="btn btn-red-outline">Red Outline</button>
+      <button class="btn btn-primary btn-sm">Small Primary</button>
+      <button class="btn btn-outline btn-sm">Small Outline</button>
+      <button class="btn btn-primary" id="btnToast">Show Toast</button>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Badges & Tags</h2>
+    <div class="badge-row">
+      <span class="badge" style="background:var(--red);color:#fff">NEW</span>
+      <span class="badge" style="background:rgba(200,16,46,.12);color:var(--red);border:1px solid rgba(200,16,46,.38)">EXCLUSIVE</span>
+      <span class="badge" style="background:#1a1000;color:#FFD700;border:1px solid rgba(255,215,0,.3)">PREMIUM</span>
+      <span class="badge" style="background:rgba(76,175,80,.1);color:#4CAF50;border:1px solid rgba(76,175,80,.35)">READY</span>
+      <span class="badge" style="background:var(--gray-mid);color:rgba(245,245,240,.4)">COMING SOON</span>
+      <span class="badge" style="background:#150000;color:var(--red);border:1px solid rgba(200,16,46,.3)">DEV</span>
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Card Components</h2>
+    <div class="card-row">
+      <div class="demo-card"><p style="font-weight:600;margin-bottom:.4rem">Default Card</p><p style="font-size:.8rem;opacity:.45;line-height:1.5">Hover to see the lift effect on this card.</p></div>
+      <div class="demo-card" style="border-color:var(--red);background:rgba(200,16,46,.06)"><p style="font-weight:600;margin-bottom:.4rem;color:var(--red)">Active Card</p><p style="font-size:.8rem;opacity:.45;line-height:1.5">Selected/active state with red border.</p></div>
+      <div class="demo-card" style="opacity:.4;pointer-events:none"><p style="font-weight:600;margin-bottom:.4rem">Disabled Card</p><p style="font-size:.8rem;opacity:.45;line-height:1.5">Reduced opacity, no interaction.</p></div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Form Elements</h2>
+    <div style="max-width:400px;display:flex;flex-direction:column;gap:1rem">
+      <div><label class="form-label">Text Input</label><input type="text" class="form-input" placeholder="Enter text…"/></div>
+      <div><label class="form-label">Select</label><select class="form-input"><option>Option One</option><option>Option Two</option></select></div>
+      <div><label class="form-label">Textarea</label><textarea class="form-input" rows="3" placeholder="Write something…"></textarea></div>
+      <div><label class="form-label">Range Slider</label><input type="range" min="0" max="100" value="60" style="width:100%;accent-color:var(--red)"/></div>
+      <div class="toggle-row"><span class="toggle-label">Toggle Switch</span><button class="toggle-sw on" id="demoToggle"><div class="toggle-knob"></div></button></div>
+    </div>
+  </div>
+
+  <!-- Skeletons -->
+  <div class="showcase-section">
+    <h2 class="showcase-title">Loading Skeletons</h2>
+    <div class="skel-row">
+      <div class="skeleton" style="width:200px;height:20px"></div>
+      <div class="skeleton" style="width:120px;height:120px;border-radius:5px"></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="skeleton" style="width:160px;height:12px"></div>
+        <div class="skeleton" style="width:120px;height:12px"></div>
+        <div class="skeleton" style="width:80px;height:12px"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="toast-notif" id="toast">✅ Toast notification works!</div>
+<script src="../js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('btnToast').addEventListener('click',()=>{
+    const t=document.getElementById('toast'); t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  });
+  document.getElementById('demoToggle').addEventListener('click',function(){ this.classList.toggle('on'); });
+});
+</script>
+</body>
+</html>

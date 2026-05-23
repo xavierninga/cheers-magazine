@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dev Hub — Cheers Magazine</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+  <style>
+    .hub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem}
+    .hub-card{background:var(--gray);border:1px solid var(--gray-mid);border-radius:6px;padding:1.3rem;text-decoration:none;color:var(--white);transition:border-color .2s,transform .2s;display:block}
+    .hub-card:hover{border-color:var(--red);transform:translateY(-2px)}
+    .hub-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem}
+    .hub-card-title{font-size:1rem;font-weight:600}
+    .hub-card-desc{font-size:.8rem;opacity:.48;line-height:1.55;margin-bottom:.8rem}
+    .hub-card-link{font-size:.72rem;color:var(--red);letter-spacing:.1em}
+    .badge-ready{font-size:.58rem;letter-spacing:.12em;background:rgba(76,175,80,.12);color:#4CAF50;padding:2px 7px;border-radius:2px;border:1px solid rgba(76,175,80,.28)}
+    .env-box{background:#150000;border:1px solid rgba(200,16,46,.3);border-radius:4px;padding:.5rem 1rem;font-family:var(--font-m);font-size:.7rem;color:var(--red)}
+  </style>
+</head>
+<body>
+  <div class="dev-topbar">
+    <a href="../index.html">← Main Site</a>
+    <span class="sep">|</span>
+    <h1>🛠 Developer Testing Hub</h1>
+    <span class="dev-env-badge">DEV MODE</span>
+  </div>
+  <div class="dev-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h2 style="font-family:var(--font-d);font-size:1.5rem;margin-bottom:.3rem">Testing Modules</h2>
+        <p style="font-size:.82rem;opacity:.42">All modules are isolated and independently runnable.</p>
+      </div>
+      <div class="env-box">ENV: development &nbsp;·&nbsp; Pages saved: <span id="pageCount">0</span></div>
+    </div>
+    <div class="hub-grid" id="hubGrid"></div>
+  </div>
+  <script src="../js/app.js"></script>
+  <script>
+  const MODULES = [
+    {icon:'📄',label:'PDF Upload',desc:'Drag & drop your PDF → extract pages → send to reader. This is the main workflow to add a magazine.',href:'pdf-upload.html'},
+    {icon:'📖',label:'Reader Tests',desc:'Test page flip speed, easing curves, zoom, auto-flip and FPS counter.',href:'reader-tests.html'},
+    {icon:'🎵',label:'Sound Lab',desc:'Preview every sound effect, adjust volume and test mute behaviour.',href:'sound-lab.html'},
+    {icon:'🎬',label:'Motion Tests',desc:'Animation playground — all transitions and micro-interactions side by side.',href:'motion-tests.html'},
+    {icon:'🔒',label:'Security Tests',desc:'Watermark density, opacity, right-click block and forensic string.',href:'security-tests.html'},
+    {icon:'🎨',label:'UI Showcase',desc:'Full component library: colours, typography, buttons, cards, forms.',href:'ui-showcase.html'},
+    {icon:'🚩',label:'Feature Flags',desc:'Toggle sounds, animations, watermark, anti-piracy in real-time.',href:'feature-flags.html'},
+    {icon:'🐛',label:'Debug Panel',desc:'Live FPS counter, memory usage, loading state simulator, event stream.',href:'debug-panel.html'},
+    {icon:'💳',label:'Payment Sim',desc:'Simulate checkout flows: success, failure, timeout, cancellation.',href:'payment-sim.html'},
+  ];
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('pageCount').textContent = MagazineStore.count();
+    const grid = document.getElementById('hubGrid');
+    MODULES.forEach(m=>{
+      const a=document.createElement('a');
+      a.className='hub-card'; a.href=m.href;
+      a.innerHTML=`<div class="hub-card-top"><span class="hub-card-title">${m.icon} ${m.label}</span><span class="badge-ready">READY</span></div><p class="hub-card-desc">${m.desc}</p><span class="hub-card-link">Open →</span>`;
+      grid.appendChild(a);
+    });
+  });
+  </script>
+</body>
+</html>

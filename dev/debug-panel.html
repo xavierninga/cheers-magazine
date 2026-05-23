@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Debug Panel — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>🐛 Debug Panel</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+  <div class="dev-grid-2" style="margin-bottom:1.5rem">
+    <!-- Performance -->
+    <div class="dev-card">
+      <p class="dev-section-title">Performance Metrics</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem">
+        <div class="stat-box"><div class="stat-box-label">FPS</div><div class="stat-box-value" id="dbFps" style="color:#4CAF50">—</div></div>
+        <div class="stat-box"><div class="stat-box-label">Memory (MB)</div><div class="stat-box-value" id="dbMem">N/A</div></div>
+        <div class="stat-box"><div class="stat-box-label">Uptime (s)</div><div class="stat-box-value" id="dbUptime">0</div></div>
+        <div class="stat-box"><div class="stat-box-label">PDF Pages</div><div class="stat-box-value" id="dbPages">—</div></div>
+      </div>
+      <p style="font-size:.65rem;opacity:.38;margin-bottom:.5rem">FPS Target: 60</p>
+      <div class="fps-bar-wrap"><div class="fps-bar-fill" id="fpsBar" style="width:0%"></div></div>
+    </div>
+    <!-- Loading states -->
+    <div class="dev-card">
+      <p class="dev-section-title">Loading State Simulator</p>
+      <div id="loadingStates"></div>
+    </div>
+  </div>
+  <!-- Feature flags read-only -->
+  <div class="dev-card" style="margin-bottom:1.5rem">
+    <p class="dev-section-title">Current Feature Flags</p>
+    <div id="ffDisplay" style="display:flex;gap:.5rem;flex-wrap:wrap"></div>
+  </div>
+  <!-- Event stream -->
+  <div class="log-panel">
+    <div class="log-header">
+      <span>LIVE EVENT STREAM</span>
+      <div style="display:flex;gap:.8rem;align-items:center">
+        <button class="log-clear" id="btnPing">PING</button>
+        <button class="log-clear" id="btnClearLog">CLEAR</button>
+      </div>
+    </div>
+    <div class="log-body" id="eventLog" style="min-height:200px">
+      <span class="l-info">Monitoring started. Events will appear here.</span>
+    </div>
+  </div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+let fps=0,lT=performance.now(),fC=0,uptime=0;
+const eventLog=document.getElementById('eventLog');
+function logEvent(level,msg){
+  const d=document.createElement('div'); d.className='l-'+level;
+  d.textContent=`${new Date().toLocaleTimeString()}  ${msg}`;
+  if(eventLog.querySelector('span')) eventLog.innerHTML='';
+  eventLog.insertBefore(d,eventLog.firstChild);
+}
+requestAnimationFrame(function tick(t){
+  fC++; uptime=Math.round(t/1000);
+  if(t-lT>=1000){
+    fps=Math.round(fC*1000/(t-lT)); fC=0; lT=t;
+    const el=document.getElementById('dbFps');
+    if(el){ el.textContent=fps; el.style.color=fps>50?'#4CAF50':fps>30?'#FF9800':'var(--red)'; }
+    document.getElementById('fpsBar').style.cssText=`width:${Math.min(fps/60*100,100)}%;background:${fps>50?'#4CAF50':fps>30?'#FF9800':'var(--red)'}`;
+    document.getElementById('dbUptime').textContent=uptime;
+    if('memory' in performance) document.getElementById('dbMem').textContent=Math.round(performance.memory.usedJSHeapSize/1048576);
+    document.getElementById('dbPages').textContent=MagazineStore.count()||'0';
+  }
+  requestAnimationFrame(tick);
+});
+const STATES=['Page Assets','PDF Worker','Sound System','Image Preloader'];
+function renderStates(){
+  const wrap=document.getElementById('loadingStates'); wrap.innerHTML='';
+  STATES.forEach(s=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    row.innerHTML=`<div id="dot-${s}" style="width:8px;height:8px;border-radius:50%;background:#4CAF50;flex-shrink:0"></div><span style="flex:1;font-size:.8rem;opacity:.7">${s}</span><span id="st-${s}" style="font-family:var(--font-m);font-size:.62rem;color:#4CAF50">READY</span><button data-s="${s}" style="padding:2px 8px;background:rgba(200,16,46,.1);border:1px solid rgba(200,16,46,.3);color:var(--red);border-radius:3px;cursor:pointer;font-size:.62rem;font-family:var(--font-m)">SIM</button>`;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const s=this.dataset.s;
+      document.getElementById('dot-'+s).style.background='#FF9800';
+      document.getElementById('st-'+s).style.cssText='font-family:var(--font-m);font-size:.62rem;color:#FF9800';
+      document.getElementById('st-'+s).textContent='LOADING';
+      logEvent('warn',`[LOADING] ${s} started`);
+      btn.disabled=true;
+      setTimeout(()=>{
+        document.getElementById('dot-'+s).style.background='#4CAF50';
+        document.getElementById('st-'+s).style.cssText='font-family:var(--font-m);font-size:.62rem;color:#4CAF50';
+        document.getElementById('st-'+s).textContent='READY';
+        btn.disabled=false;
+        logEvent('success',`[LOADED] ${s} complete`);
+      },1500+Math.random()*1000);
+    });
+  });
+}
+function renderFlags(){
+  const wrap=document.getElementById('ffDisplay');
+  Object.entries(FeatureFlags.all()).forEach(([k,v])=>{
+    const badge=document.createElement('span');
+    badge.style.cssText=`font-family:var(--font-m);font-size:.62rem;padding:3px 9px;border-radius:3px;border:1px solid;background:${v?'rgba(76,175,80,.1)':'rgba(200,16,46,.08)'};color:${v?'#4CAF50':'var(--red)'};border-color:${v?'rgba(76,175,80,.3)':'rgba(200,16,46,.28)'}`;
+    badge.textContent=k+': '+(v?'ON':'OFF');
+    wrap.appendChild(badge);
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  renderStates(); renderFlags();
+  logEvent('success','Debug panel active');
+  logEvent('info',`PDF pages in storage: ${MagazineStore.count()}`);
+  document.getElementById('btnPing').addEventListener('click',()=>logEvent('info','Manual ping — '+new Date().toLocaleTimeString()));
+  document.getElementById('btnClearLog').addEventListener('click',()=>{ eventLog.innerHTML='<span class="l-info">Log cleared.</span>'; });
+  window.addEventListener('ff-change',e=>logEvent('warn',`Feature flag changed: ${e.detail.k} = ${e.detail.v}`));
+});
+</script>
+</body>
+</html>

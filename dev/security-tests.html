@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Security Tests — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>🔒 Security Tests</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+  <div class="dev-grid-2">
+    <!-- Controls -->
+    <div>
+      <div class="dev-card">
+        <p class="dev-section-title">Security Toggles</p>
+        <div class="toggle-row"><span class="toggle-label">💧 User Watermark</span><button class="toggle-sw on" id="twWatermark"><div class="toggle-knob"></div></button></div>
+        <div class="toggle-row"><span class="toggle-label">🛡️ Anti-Piracy Overlay</span><button class="toggle-sw" id="twAntiPiracy"><div class="toggle-knob"></div></button></div>
+        <div class="toggle-row"><span class="toggle-label">🚫 Block Right-Click</span><button class="toggle-sw" id="twRightClick"><div class="toggle-knob"></div></button></div>
+        <div class="toggle-row"><span class="toggle-label">🔤 Block Text Select</span><button class="toggle-sw" id="twSelect"><div class="toggle-knob"></div></button></div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Watermark Config</p>
+        <div class="form-group"><label class="form-label">User ID</label><input type="text" id="wmUserId" class="form-input" value="test-user-001"/></div>
+        <div class="form-group"><label class="form-label">User Email</label><input type="text" id="wmEmail" class="form-input" value="reader@cheers.com"/></div>
+        <div class="form-group">
+          <label class="form-label">Density</label>
+          <select id="wmDensity" class="form-input">
+            <option value="300">Low (300px)</option>
+            <option value="230" selected>Medium (230px)</option>
+            <option value="150">High (150px)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Opacity: <span id="opacityVal">0.055</span></label>
+          <input type="range" min="0.01" max="0.2" step="0.005" value="0.055" id="wmOpacity" style="width:100%;accent-color:var(--red)"/>
+        </div>
+        <button class="form-btn" id="btnApply" style="margin-top:.4rem">Apply Watermark</button>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem;background:#0d0d0d">
+        <p class="dev-section-title">Forensic String (Base64)</p>
+        <div id="forensicStr" style="font-family:var(--font-m);font-size:.62rem;opacity:.45;word-break:break-all;line-height:1.55">—</div>
+      </div>
+    </div>
+    <!-- Preview + log -->
+    <div>
+      <p class="dev-section-title">Page Preview</p>
+      <div id="previewPage" style="aspect-ratio:3/4;background:linear-gradient(135deg,#1c0000,#111);border:1px solid var(--gray-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;position:relative;overflow:hidden">
+        <div id="wmLayer" style="position:absolute;inset:0;background-repeat:repeat;background-size:230px;pointer-events:none;z-index:5"></div>
+        <span style="font-family:var(--font-d);font-size:1.2rem;opacity:.45;position:relative;z-index:1">Mock Magazine Page</span>
+      </div>
+      <div class="log-panel">
+        <div class="log-header"><span>EVENT LOG</span><button class="log-clear" id="btnClearEvt">CLEAR</button></div>
+        <div class="log-body" id="secLog" style="min-height:140px"><span class="l-info">Toggle features to see events.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+function logSec(level,msg){ const b=document.getElementById('secLog'); const d=document.createElement('div'); d.className='l-'+level; d.textContent=new Date().toLocaleTimeString()+'  '+msg; if(b.querySelector('span')) b.innerHTML=''; b.insertBefore(d,b.firstChild); }
+function applyWm(){
+  const userId=document.getElementById('wmUserId').value;
+  const email=document.getElementById('wmEmail').value;
+  const density=parseInt(document.getElementById('wmDensity').value);
+  const opacity=parseFloat(document.getElementById('wmOpacity').value);
+  const wm=document.getElementById('wmLayer');
+  if(!document.getElementById('twWatermark').classList.contains('on')){ wm.style.backgroundImage=''; logSec('warn','Watermark disabled'); return; }
+  const cv=document.createElement('canvas'); cv.width=380; cv.height=190;
+  const ctx=cv.getContext('2d');
+  ctx.font='12px Georgia,serif'; ctx.fillStyle='#C8102E'; ctx.globalAlpha=opacity;
+  ctx.translate(190,95); ctx.rotate(-33*Math.PI/180);
+  [userId,email,new Date().toLocaleDateString()].forEach((l,i)=>ctx.fillText(l,-ctx.measureText(l).width/2,(i-1)*17));
+  wm.style.backgroundImage=`url(${cv.toDataURL()})`;
+  wm.style.backgroundSize=density+'px';
+  logSec('success',`Watermark applied — density:${density}px opacity:${opacity}`);
+  document.getElementById('forensicStr').textContent=btoa(`${userId}|${email}|${Date.now()}`);
+}
+function toggle(btn){ btn.classList.toggle('on'); }
+document.addEventListener('DOMContentLoaded',()=>{
+  applyWm();
+  document.getElementById('wmOpacity').addEventListener('input',function(){ document.getElementById('opacityVal').textContent=parseFloat(this.value).toFixed(3); applyWm(); });
+  document.getElementById('btnApply').addEventListener('click',applyWm);
+  ['twWatermark','twAntiPiracy','twRightClick','twSelect'].forEach(id=>{
+    document.getElementById(id).addEventListener('click',function(){ toggle(this); logSec('info',`${id} = ${this.classList.contains('on')}`); if(id==='twWatermark') applyWm(); if(id==='twAntiPiracy'){ const ov=document.getElementById('antiPiracyOv'); if(ov) ov.remove(); else{ const d=document.createElement('div'); d.id='antiPiracyOv'; d.style.cssText='position:fixed;inset:0;background:transparent;z-index:9999;cursor:default'; document.getElementById('previewPage').appendChild(d); } } if(id==='twRightClick'){ if(this.classList.contains('on')) document.addEventListener('contextmenu',blockRc); else document.removeEventListener('contextmenu',blockRc); } if(id==='twSelect'){ document.body.style.userSelect=this.classList.contains('on')?'none':''; } });
+  });
+  document.getElementById('btnClearEvt').addEventListener('click',()=>{ document.getElementById('secLog').innerHTML='<span class="l-info">Log cleared.</span>'; });
+});
+function blockRc(e){ e.preventDefault(); logSec('warn','Right-click blocked'); }
+</script>
+</body>
+</html>

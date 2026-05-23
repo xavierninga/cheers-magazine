@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Motion Tests — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+  <style>
+    .anim-grid{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem}
+    .anim-card{text-align:center}
+    .anim-box{width:150px;height:95px;background:linear-gradient(135deg,#1c0000,#111);border:1px solid var(--gray-mid);border-radius:5px;display:flex;align-items:center;justify-content:center;margin-bottom:.6rem;font-size:.7rem;opacity:.65;letter-spacing:.1em;perspective:1000px}
+    .anim-label{font-size:.72rem;opacity:.5;margin-bottom:.4rem}
+    .micro-grid{display:flex;gap:.8rem;flex-wrap:wrap}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  </style>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>🎬 Motion Tests</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+  <!-- Speed -->
+  <div class="dev-card" style="margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+    <span style="font-size:.8rem;opacity:.5">Speed multiplier:</span>
+    <div style="display:flex;gap:.5rem" id="speedMult">
+      <button class="btn btn-sm btn-outline" data-m="0.5">0.5×</button>
+      <button class="btn btn-sm btn-primary" data-m="1">1×</button>
+      <button class="btn btn-sm btn-outline" data-m="2">2×</button>
+      <button class="btn btn-sm btn-outline" data-m="3">3×</button>
+    </div>
+  </div>
+
+  <!-- Page transitions -->
+  <h2 style="font-family:var(--font-d);font-size:1.2rem;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gray-mid)">Page Transitions</h2>
+  <div class="anim-grid" id="transGrid"></div>
+
+  <!-- Micro interactions -->
+  <h2 style="font-family:var(--font-d);font-size:1.2rem;margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gray-mid)">Micro-Interactions</h2>
+  <div class="micro-grid" id="microGrid"></div>
+
+  <!-- Page flip variants -->
+  <h2 style="font-family:var(--font-d);font-size:1.2rem;margin:.8rem 0 1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gray-mid)">Page Flip Variants</h2>
+  <div style="display:flex;gap:1.5rem;flex-wrap:wrap" id="flipGrid"></div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+let mult=1;
+const TRANS=[
+  {id:'fade', label:'Fade', play:el=>{el.style.transition=`opacity ${500/mult}ms ease`; el.style.opacity=0; setTimeout(()=>el.style.opacity=.65,600/mult);}},
+  {id:'slideUp',label:'Slide Up',play:el=>{el.style.transition=`transform ${500/mult}ms var(--ease-spring)`; el.style.transform='translateY(-16px)'; setTimeout(()=>el.style.transform='',600/mult);}},
+  {id:'scale',label:'Scale Pop',play:el=>{el.style.transition=`transform ${400/mult}ms cubic-bezier(0.34,1.56,0.64,1)`; el.style.transform='scale(1.15)'; setTimeout(()=>el.style.transform='',500/mult);}},
+  {id:'flipX',label:'Flip X',play:el=>{el.style.transition=`transform ${600/mult}ms var(--ease-flip)`; el.style.transformOrigin='left center'; el.style.transform='rotateY(-180deg)'; setTimeout(()=>{ el.style.transform=''; el.style.transformOrigin=''; },700/mult);}},
+  {id:'blur',label:'Blur Reveal',play:el=>{el.style.transition=`filter ${500/mult}ms,opacity ${500/mult}ms`; el.style.filter='blur(8px)'; el.style.opacity=0; setTimeout(()=>{el.style.filter=''; el.style.opacity=.65;},600/mult);}},
+];
+const MICRO=[
+  {label:'Button Press',play:el=>{el.style.transition=`transform ${150/mult}ms`; el.style.transform='scale(.93)'; setTimeout(()=>el.style.transform='',200/mult);}},
+  {label:'Card Lift',  play:el=>{el.style.transition=`transform ${200/mult}ms,box-shadow ${200/mult}ms`; el.style.transform='translateY(-4px)'; el.style.boxShadow='0 8px 30px rgba(200,16,46,.3)'; setTimeout(()=>{el.style.transform=''; el.style.boxShadow='';},300/mult);}},
+  {label:'Error Shake',play:el=>{el.style.animation=`shake ${500/mult}ms ease`; setTimeout(()=>el.style.animation='',600/mult);}},
+  {label:'Attention',  play:el=>{el.style.transition=`background ${300/mult}ms`; el.style.background='rgba(200,16,46,.18)'; setTimeout(()=>el.style.background='',400/mult);}},
+];
+const FLIPS=[
+  {label:'Magazine',  easing:'cubic-bezier(0.645,0.045,0.355,1.000)'},
+  {label:'Linear',    easing:'linear'},
+  {label:'Spring',    easing:'cubic-bezier(0.16,1,0.3,1)'},
+  {label:'Dramatic',  easing:'cubic-bezier(0.87,0,0.13,1)'},
+];
+document.addEventListener('DOMContentLoaded',()=>{
+  // Speed
+  document.getElementById('speedMult').addEventListener('click',e=>{
+    const b=e.target.closest('[data-m]'); if(!b) return;
+    mult=parseFloat(b.dataset.m);
+    document.querySelectorAll('#speedMult button').forEach(x=>x.className='btn btn-sm btn-outline');
+    b.className='btn btn-sm btn-primary';
+  });
+  // Transitions
+  const tg=document.getElementById('transGrid');
+  TRANS.forEach(t=>{
+    const wrap=document.createElement('div'); wrap.className='anim-card';
+    const box=document.createElement('div'); box.className='anim-box'; box.textContent='PREVIEW';
+    const lbl=document.createElement('p'); lbl.className='anim-label'; lbl.textContent=t.label;
+    const btn=document.createElement('button'); btn.className='btn btn-sm btn-red-outline'; btn.textContent='▶ Play';
+    btn.addEventListener('click',()=>{ t.play(box); btn.textContent='▶ Running'; btn.disabled=true; setTimeout(()=>{btn.textContent='▶ Play';btn.disabled=false;},800/mult); });
+    wrap.append(box,lbl,btn); tg.appendChild(wrap);
+  });
+  // Micro
+  const mg=document.getElementById('microGrid');
+  MICRO.forEach(m=>{
+    const btn=document.createElement('button');
+    btn.className='btn btn-outline'; btn.textContent=m.label;
+    btn.addEventListener('click',()=>m.play(btn));
+    mg.appendChild(btn);
+  });
+  // Flips
+  const fg=document.getElementById('flipGrid');
+  FLIPS.forEach(f=>{
+    const wrap=document.createElement('div'); wrap.style.cssText='text-align:center';
+    const book=document.createElement('div');
+    book.style.cssText='width:100px;aspect-ratio:3/4;background:linear-gradient(135deg,#1c0000,#111);border:1px solid var(--gray-mid);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;opacity:.6;letter-spacing:.1em;margin-bottom:.5rem;perspective:800px';
+    book.textContent='PAGE';
+    const lbl=document.createElement('p'); lbl.style.cssText='font-size:.72rem;opacity:.5;margin-bottom:.4rem'; lbl.textContent=f.label;
+    const btn=document.createElement('button'); btn.className='btn btn-sm btn-red-outline'; btn.textContent='Flip';
+    btn.addEventListener('click',()=>{
+      book.style.transition=`transform ${700/mult}ms ${f.easing}`;
+      book.style.transformOrigin='left center';
+      book.style.transform='rotateY(-180deg)';
+      btn.disabled=true;
+      setTimeout(()=>{ book.style.transform='rotateY(0)'; setTimeout(()=>{ book.style.transformOrigin=''; btn.disabled=false; },100); },800/mult);
+    });
+    wrap.append(book,lbl,btn); fg.appendChild(wrap);
+  });
+});
+</script>
+</body>
+</html>

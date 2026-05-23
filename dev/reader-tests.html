@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Reader Tests — Cheers Dev</title>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/pages.css"/>
+  <style>
+    .preview-stage{background:#0d0d0d;border-radius:8px;min-height:420px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .preview-book{width:220px;aspect-ratio:3/4;border:1px solid var(--gray-mid);border-radius:3px;box-shadow:0 20px 60px rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(135deg,#1c0000,#111)}
+    .preview-num{font-family:var(--font-d);font-size:3.5rem;font-weight:900;color:rgba(200,16,46,.18);line-height:1}
+    .arr{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;background:rgba(200,16,46,.14);border:1px solid rgba(200,16,46,.38);color:var(--white);font-size:1.3rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .18s}
+    .arr:hover{background:var(--red)} .arr.l{left:12px} .arr.r{right:12px}
+  </style>
+</head>
+<body>
+<div class="dev-topbar">
+  <a href="index.html">← Dev Hub</a><span class="sep">|</span>
+  <h1>📖 Reader Playground</h1>
+  <span class="dev-env-badge">DEV TOOL</span>
+</div>
+<div class="dev-wrap">
+  <div class="dev-grid-2">
+    <!-- Controls -->
+    <div>
+      <div class="dev-card">
+        <p class="dev-section-title">Live Stats</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+          <div class="stat-box"><div class="stat-box-label">FPS</div><div class="stat-box-value" id="sFps" style="color:#4CAF50">—</div></div>
+          <div class="stat-box"><div class="stat-box-label">Page</div><div class="stat-box-value" id="sPage">1/10</div></div>
+          <div class="stat-box"><div class="stat-box-label">Flips</div><div class="stat-box-value" id="sFlips">0</div></div>
+          <div class="stat-box"><div class="stat-box-label">Zoom</div><div class="stat-box-value" id="sZoom">100%</div></div>
+        </div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Flip Speed</p>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap" id="speedBtns">
+          <button class="btn btn-sm btn-outline speed-btn" data-v="200">200ms</button>
+          <button class="btn btn-sm btn-outline speed-btn" data-v="400">400ms</button>
+          <button class="btn btn-sm btn-primary speed-btn" data-v="600">600ms</button>
+          <button class="btn btn-sm btn-outline speed-btn" data-v="900">900ms</button>
+          <button class="btn btn-sm btn-outline speed-btn" data-v="1200">1200ms</button>
+        </div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Easing Curve</p>
+        <div id="easingBtns"></div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Zoom</p>
+        <div style="display:flex;align-items:center;gap:.8rem">
+          <input type="range" min="0.5" max="2.5" step="0.1" value="1" id="zoomSlider" style="flex:1;accent-color:var(--red)"/>
+          <span id="zoomVal" style="font-family:var(--font-m);font-size:.75rem;color:var(--red);min-width:38px">100%</span>
+        </div>
+      </div>
+      <div class="dev-card" style="margin-top:.8rem">
+        <p class="dev-section-title">Options</p>
+        <div class="toggle-row"><span class="toggle-label">Auto Flip</span><button class="toggle-sw" id="autoToggle"><div class="toggle-knob"></div></button></div>
+      </div>
+    </div>
+    <!-- Preview -->
+    <div>
+      <div class="preview-stage">
+        <button class="arr l" id="arrL">&#8249;</button>
+        <div class="preview-book" id="previewBook" style="transition:transform 0.6s cubic-bezier(0.645,0.045,0.355,1.000)">
+          <span class="preview-num" id="previewNum">01</span>
+        </div>
+        <button class="arr r" id="arrR">&#8250;</button>
+      </div>
+      <div style="text-align:center;font-family:var(--font-m);font-size:.6rem;opacity:.22;margin-top:.5rem">
+        ← → Navigate &nbsp;|&nbsp; + − Zoom &nbsp;|&nbsp; Space Auto-flip
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../js/app.js"></script>
+<script>
+const EASINGS=[
+  {label:'Magazine (default)', val:'cubic-bezier(0.645,0.045,0.355,1.000)'},
+  {label:'Linear',             val:'linear'},
+  {label:'Ease In-Out',        val:'ease-in-out'},
+  {label:'Spring',             val:'cubic-bezier(0.16,1,0.3,1)'},
+  {label:'Bounce',             val:'cubic-bezier(0.34,1.56,0.64,1)'},
+];
+const BG=['linear-gradient(135deg,#1c0000,#111)','linear-gradient(135deg,#0A1A0A,#111)','linear-gradient(135deg,#0A0A1A,#111)','linear-gradient(135deg,#1a1000,#111)','linear-gradient(135deg,#111,#222)'];
+let speed=600, easing=EASINGS[0].val, zoom=1, page=0, flipping=false, flips=0, autoOn=false, autoIv;
+let fps=0,lT=performance.now(),fC=0;
+requestAnimationFrame(function tick(t){ fC++; if(t-lT>=1000){ fps=Math.round(fC*1000/(t-lT)); fC=0; lT=t; const el=document.getElementById('sFps'); if(el){el.textContent=fps;el.style.color=fps>50?'#4CAF50':fps>30?'#FF9800':'var(--red)';} } requestAnimationFrame(tick); });
+
+function flip(dir){
+  if(flipping) return; flipping=true; flips++;
+  const book=document.getElementById('previewBook');
+  book.style.transition=`transform ${speed}ms ${easing}`;
+  book.style.transformOrigin=dir==='next'?'left center':'right center';
+  book.style.transform=dir==='next'?'rotateY(-90deg)':'rotateY(90deg)';
+  setTimeout(()=>{
+    page=(dir==='next'?(page+1)%10:(page-1+10)%10);
+    book.style.background=BG[page%BG.length];
+    document.getElementById('previewNum').textContent=String(page+1).padStart(2,'0');
+    book.style.transition='none'; book.style.transform='rotateY(0)'; book.style.transformOrigin='center';
+    flipping=false;
+    document.getElementById('sPage').textContent=(page+1)+'/10';
+    document.getElementById('sFlips').textContent=flips;
+  },speed);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('arrL').addEventListener('click',()=>flip('prev'));
+  document.getElementById('arrR').addEventListener('click',()=>flip('next'));
+  document.querySelectorAll('.speed-btn').forEach(b=>{
+    b.addEventListener('click',function(){ speed=parseInt(this.dataset.v); document.querySelectorAll('.speed-btn').forEach(x=>{x.className='btn btn-sm btn-outline speed-btn';}); this.className='btn btn-sm btn-primary speed-btn'; });
+  });
+  const eb=document.getElementById('easingBtns');
+  EASINGS.forEach((e,i)=>{
+    const b=document.createElement('button');
+    b.className='btn btn-sm '+(i===0?'btn-red-outline':'btn-outline');
+    b.style.cssText='display:block;width:100%;text-align:left;margin-bottom:4px';
+    b.textContent=e.label;
+    b.addEventListener('click',function(){ easing=e.val; eb.querySelectorAll('button').forEach(x=>x.className='btn btn-sm btn-outline'); this.className='btn btn-sm btn-red-outline'; });
+    eb.appendChild(b);
+  });
+  document.getElementById('zoomSlider').addEventListener('input',function(){ zoom=parseFloat(this.value); document.getElementById('zoomVal').textContent=Math.round(zoom*100)+'%'; document.getElementById('sZoom').textContent=Math.round(zoom*100)+'%'; document.getElementById('previewBook').style.transform=`scale(${zoom})`; });
+  document.getElementById('autoToggle').addEventListener('click',function(){ autoOn=!autoOn; this.classList.toggle('on',autoOn); if(autoOn) autoIv=setInterval(()=>flip('next'),speed+500); else clearInterval(autoIv); });
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' ') flip('next'); if(e.key==='ArrowLeft') flip('prev'); if(e.key==='+') document.getElementById('zoomSlider').stepUp(); if(e.key==='-') document.getElementById('zoomSlider').stepDown(); });
+});
+</script>
+</body>
+</html>
