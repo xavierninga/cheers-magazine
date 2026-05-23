@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Contact — Cheers Magazine</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+  <div id="navMount"></div>
+  <div class="page-header">
+    <p class="page-eyebrow">Get in Touch</p>
+    <h1 class="page-title">Contact Us</h1>
+  </div>
+  <div class="contact-wrap">
+    <div id="contactForm">
+      <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="cName" class="form-input" placeholder="Your name"/></div>
+      <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="cEmail" class="form-input" placeholder="you@example.com"/></div>
+      <div class="form-group"><label class="form-label">Subject</label><input type="text" id="cSubject" class="form-input" placeholder="What is this about?"/></div>
+      <div class="form-group"><label class="form-label">Message</label><textarea id="cMessage" class="form-input" rows="5" placeholder="Your message…"></textarea></div>
+      <button class="form-btn" id="cSubmit">Send Message</button>
+    </div>
+    <div class="success-box" id="cSuccess">
+      <span class="success-icon">✅</span>
+      <h2 class="success-title">Message Sent!</h2>
+      <p class="success-sub" id="cSuccessMsg">We'll reply within 24 hours.</p>
+      <a href="index.html" class="btn btn-primary" style="margin-top:1rem">← Back to Home</a>
+    </div>
+  </div>
+  <div id="footerMount"></div>
+  <script src="js/app.js"></script><script src="js/pages.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('navMount').innerHTML=renderNav();
+    document.getElementById('footerMount').innerHTML=renderFooter();
+    document.getElementById('cSubmit').addEventListener('click',()=>{
+      const n=document.getElementById('cName').value.trim();
+      const e=document.getElementById('cEmail').value.trim();
+      const m=document.getElementById('cMessage').value.trim();
+      if(!n||!e||!m){alert('Please fill in all required fields.');return;}
+      document.getElementById('contactForm').style.display='none';
+      document.getElementById('cSuccess').classList.add('visible');
+      document.getElementById('cSuccessMsg').textContent=`We'll reply to ${e} within 24 hours.`;
+    });
+  });
+  </script>
+</body>
+</html>

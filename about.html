@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>About — Cheers Magazine</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+  <div id="navMount"></div>
+  <div class="page-header">
+    <p class="page-eyebrow">About Us</p>
+    <h1 class="page-title">The Voice of<br/><em class="red" style="font-style:italic">Modern Culture</em></h1>
+  </div>
+  <div class="about-wrap">
+    <div class="about-body">
+      <p>Cheers Magazine is a premium digital publication dedicated to celebrating lifestyle, culture, entertainment, and the people who shape them. Founded with a passion for great storytelling and beautiful design, we bring you curated content that inspires and informs.</p>
+      <p>Our readers are discerning, ambitious, and culturally connected. We create for them — and with them — a magazine experience that feels as luxurious as the world it covers.</p>
+      <p>Every issue is crafted with care: from the photography and editorial direction to the immersive digital reading experience that brings each page to life on any device.</p>
+    </div>
+    <div class="about-stats">
+      <div><p class="stat-num">10K+</p><p class="stat-lbl">Monthly Readers</p></div>
+      <div><p class="stat-num">12</p><p class="stat-lbl">Issues Per Year</p></div>
+      <div><p class="stat-num">100%</p><p class="stat-lbl">Digital-First</p></div>
+    </div>
+    <div class="about-cta">
+      <a href="reader.html" class="btn btn-primary">Read Latest Issue</a>
+      <a href="subscribe.html" class="btn btn-outline">Subscribe</a>
+    </div>
+  </div>
+  <div id="footerMount"></div>
+  <script src="js/app.js"></script><script src="js/pages.js"></script>
+  <script>document.addEventListener('DOMContentLoaded',()=>{ document.getElementById('navMount').innerHTML=renderNav('about.html'); document.getElementById('footerMount').innerHTML=renderFooter(); });</script>
+</body>
+</html>

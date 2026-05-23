@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="description" content="Cheers Magazine — Premium Digital Edition"/>
+  <title>Cheers Magazine</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/homepage.css"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="images/cheers-logo.jpg" alt="Cheers Magazine" onerror="this.style.display='none'"/>
+      <span class="logo-text">CHEERS <span class="red">MAGAZINE</span></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="issues.html">Issues</a>
+      <a href="about.html">About</a>
+      <a href="subscribe.html">Subscribe</a>
+      <a href="reader.html" class="nav-cta">Read Now</a>
+    </div>
+    <button class="hamburger" id="ham" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-accent"></div>
+  <div class="hero-content" id="heroContent">
+    <p class="hero-eyebrow">Premium Digital Edition</p>
+    <h1 class="hero-title">CHEERS<br/><em class="red" style="font-style:italic">Magazine</em></h1>
+    <p class="hero-sub">The definitive guide to lifestyle, culture, and entertainment.<br/>Beautifully crafted for the digital age.</p>
+    <div class="hero-btns">
+      <a href="reader.html" class="btn btn-primary">▶ Read Latest Issue</a>
+      <a href="issues.html" class="btn btn-outline">Browse Issues</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- LATEST ISSUES -->
+<section class="latest-section">
+  <div class="section-wrap">
+    <div class="section-top">
+      <div>
+        <p class="section-eyebrow">Current Issue</p>
+        <h2 class="section-title">Latest Editions</h2>
+      </div>
+      <a href="issues.html" class="view-all">All Issues →</a>
+    </div>
+    <div class="issues-grid" id="issuesGrid">
+      <!-- skeleton while loading -->
+      <div class="skeleton" style="height:380px;border-radius:4px"></div>
+      <div class="skeleton" style="height:380px;border-radius:4px"></div>
+      <div class="skeleton" style="height:380px;border-radius:4px"></div>
+      <div class="skeleton" style="height:380px;border-radius:4px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES STRIP -->
+<section class="features-strip">
+  <div class="features-inner">
+    <div class="feat-item">
+      <span class="feat-icon">📖</span>
+      <p class="feat-title">Immersive Reader</p>
+      <p class="feat-desc">Cinematic page-flip with premium sound design</p>
+    </div>
+    <div class="feat-item">
+      <span class="feat-icon">📱</span>
+      <p class="feat-title">Mobile Ready</p>
+      <p class="feat-desc">Swipe gestures and full touch support</p>
+    </div>
+    <div class="feat-item">
+      <span class="feat-icon">🔒</span>
+      <p class="feat-title">Secure Content</p>
+      <p class="feat-desc">Anti-piracy watermark protection</p>
+    </div>
+    <div class="feat-item">
+      <span class="feat-icon">⚡</span>
+      <p class="feat-title">Instant Access</p>
+      <p class="feat-desc">No app download required</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEV BANNER -->
+<div class="dev-banner">
+  <span class="dev-banner-label">🛠 Dev Testing:</span>
+  <a href="dev/index.html">Hub</a>
+  <a href="dev/pdf-upload.html">📄 Upload PDF</a>
+  <a href="dev/sound-lab.html">🎵 Sound Lab</a>
+  <a href="dev/reader-tests.html">📖 Reader</a>
+  <a href="dev/motion-tests.html">🎬 Motion</a>
+  <a href="dev/security-tests.html">🔒 Security</a>
+  <a href="dev/ui-showcase.html">🎨 UI</a>
+  <a href="dev/feature-flags.html">🚩 Flags</a>
+  <a href="dev/debug-panel.html">🐛 Debug</a>
+  <a href="dev/payment-sim.html">💳 Payment</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo-text">CHEERS <span class="red">MAGAZINE</span></span>
+      <p>Premium digital magazine celebrating lifestyle, culture, and entertainment.</p>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Magazine</p>
+      <a href="reader.html">Latest Issue</a>
+      <a href="issues.html">All Issues</a>
+      <a href="subscribe.html">Subscribe</a>
+    </div>
+    <div class="footer-col">
+      <p class="footer-col-title">Company</p>
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p id="footerYear"></p>
+    <p>v1.0.0 · Cheers Magazine Platform</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // Hero animation
+  setTimeout(() => document.getElementById('heroContent')?.classList.add('vis'), 100);
+  // Load issues
+  const grid = document.getElementById('issuesGrid');
+  const issues = await CheersAPI.getIssues();
+  grid.innerHTML = '';
+  issues.forEach(issue => grid.appendChild(buildIssueCard(issue)));
+});
+</script>
+</body>
+</html>

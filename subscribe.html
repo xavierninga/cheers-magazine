@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Subscribe — Cheers Magazine</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+  <div id="navMount"></div>
+
+  <div class="page-header">
+    <p class="page-eyebrow">Subscribe</p>
+    <h1 class="page-title">Choose Your Plan</h1>
+  </div>
+
+  <div class="subscribe-wrap">
+    <div class="plans-grid" id="plansGrid"></div>
+
+    <div class="sub-form-card">
+      <p class="sub-form-title">Get Started</p>
+      <div id="subForm">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="subEmail" class="form-input" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="subName" class="form-input" placeholder="Your full name"/>
+        </div>
+        <button class="form-btn" id="subBtn">Continue to Payment →</button>
+        <p class="plan-summary" id="planSummary"></p>
+      </div>
+      <div class="success-box" id="successBox">
+        <span class="success-icon">✅</span>
+        <h2 class="success-title">You're In!</h2>
+        <p class="success-sub" id="successMsg">Check your email to complete setup.</p>
+        <a href="reader.html" class="btn btn-primary" style="margin-top:1rem">Read Now →</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="footerMount"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/pages.js"></script>
+  <script>
+  const PLANS = [
+    {id:'monthly', label:'Monthly',      price:'2,500',  currency:'XAF', period:'/month', desc:'Full access every month. Cancel anytime.',
+     features:['All current & back issues','Immersive digital reader','Early access to new issues','Offline reading']},
+    {id:'annual',  label:'Annual',       price:'24,000', currency:'XAF', period:'/year',  badge:'Best Value', desc:'2 months free vs monthly.',
+     features:['Everything in Monthly','2 months free','Exclusive subscriber content','Priority support']},
+    {id:'single',  label:'Single Issue', price:'500',    currency:'XAF', period:'/issue', desc:'One issue, no commitment.',
+     features:['One complete issue','Permanent access','Full reader experience']},
+  ];
+  let selectedPlan = 'annual';
+
+  function renderPlans() {
+    const grid = document.getElementById('plansGrid');
+    grid.innerHTML = '';
+    PLANS.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'plan-card' + (p.id===selectedPlan ? ' selected' : '');
+      card.innerHTML = `
+        ${p.badge ? `<span class="plan-badge">${p.badge}</span>` : ''}
+        <p class="plan-label">${p.label}</p>
+        <p class="plan-price">${p.price}</p>
+        <p class="plan-period">${p.currency}${p.period}</p>
+        <p class="plan-desc">${p.desc}</p>
+        <ul class="plan-feats">${p.features.map(f=>`<li>${f}</li>`).join('')}</ul>`;
+      card.addEventListener('click', () => { selectedPlan=p.id; renderPlans(); updateSummary(); });
+      grid.appendChild(card);
+    });
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const p = PLANS.find(x=>x.id===selectedPlan);
+    document.getElementById('planSummary').textContent = `Selected: ${p.label} — ${p.price} ${p.currency}${p.period}`;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('navMount').innerHTML = renderNav('subscribe.html');
+    document.getElementById('footerMount').innerHTML = renderFooter();
+    renderPlans();
+    document.getElementById('subBtn').addEventListener('click', () => {
+      const email = document.getElementById('subEmail').value.trim();
+      const name  = document.getElementById('subName').value.trim();
+      if (!email || !name) { alert('Please fill in all fields.'); return; }
+      document.getElementById('subForm').style.display = 'none';
+      const box = document.getElementById('successBox');
+      box.classList.add('visible');
+      document.getElementById('successMsg').textContent = `We'll send access details to ${email}`;
+    });
+  });
+  </script>
+</body>
+</html>

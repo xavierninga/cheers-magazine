@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>All Issues — Cheers Magazine</title>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/homepage.css"/>
+  <link rel="stylesheet" href="css/pages.css"/>
+</head>
+<body>
+  <div id="navMount"></div>
+
+  <div class="page-header">
+    <p class="page-eyebrow">Archive</p>
+    <h1 class="page-title">All Issues</h1>
+  </div>
+
+  <div class="issues-archive" id="issuesGrid">
+    <div class="skeleton" style="height:380px;border-radius:4px"></div>
+    <div class="skeleton" style="height:380px;border-radius:4px"></div>
+    <div class="skeleton" style="height:380px;border-radius:4px"></div>
+    <div class="skeleton" style="height:380px;border-radius:4px"></div>
+  </div>
+
+  <div id="devMount"></div>
+  <div id="footerMount"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/pages.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('navMount').innerHTML = renderNav('issues.html');
+    document.getElementById('devMount').innerHTML = renderDevBanner();
+    document.getElementById('footerMount').innerHTML = renderFooter();
+    const grid = document.getElementById('issuesGrid');
+    const issues = await CheersAPI.getIssues();
+    grid.innerHTML = '';
+    issues.forEach(issue => grid.appendChild(buildIssueCard(issue)));
+  });
+  </script>
+</body>
+</html>

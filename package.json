@@ -1,0 +1,39 @@
+{
+  "name": "cheers-magazine",
+  "version": "1.0.0",
+  "description": "Cheers Magazine - Premium Digital Reader Platform",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "analyze": "ANALYZE=true next build"
+  },
+  "dependencies": {
+    "next": "14.2.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "pdfjs-dist": "^4.2.67",
+    "framer-motion": "^11.2.0",
+    "zustand": "^4.5.2",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.383.0",
+    "sharp": "^0.33.4",
+    "react-dropzone": "^14.2.3",
+    "howler": "^2.2.4",
+    "@types/howler": "^2.2.11"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.0"
+  }
+}
